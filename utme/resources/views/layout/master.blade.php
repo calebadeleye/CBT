@@ -62,14 +62,16 @@
                             </select>
                             <!-- Multiple select filter  -->
                             <div class="login-wthree my-auto">
-                                @if (!Route::is('guest.showUserBoard') && !Route::is('guest.showUserScores') && !Route::is('guest.showQuestions') && !Route::is('guest.showAdminBoard') && !Route::is('guest.addQuestion'))
+                                @if (!Route::is('guest.showUserBoard') && !Route::is('guest.showUserScores') && !Route::is('guest.showQuestions') && !Route::is('guest.showAdminBoard') && !Route::is('guest.addQuestion') &&
+                                !Route::is('guest.addBank'))
                                     <a href="{{ route('guest.showLogin') }}" class="text-white text-capitalize">
                                         login <span class="fas fa-sign-in-alt flash animated infinite"></span>
                                     </a>
                                 @endif
 
                                  @if (Route::is('guest.showUserBoard') || Route::is('guest.showUserScores') || Route::is('guest.showAdminBoard') || Route::is('guest.showQuestions')  ||
-                                 Route::is('guest.addQuestion'))
+                                 Route::is('guest.addQuestion')   ||
+                                 Route::is('guest.addBank'))   
                                     <a href="#" class="text-white text-capitalize {{ Route::is('guest.showQuestions') || 
                                     Route::is('guest.showAdminBoard')||
                                     Route::is('guest.addQuestion') ? 'admin-logout' : 'logout' }}">logout <span class="fas fa-sign-in-alt flash animated infinite"></span></a>
@@ -260,6 +262,12 @@
 
                     // Save pin details in session storage
                     sessionStorage.setItem('mypin', JSON.stringify(response.pin));
+
+                    // Save bank details in session storage
+                    sessionStorage.setItem('mybank', JSON.stringify(response.bank));
+
+                    // Save bank lists in session storage
+                    sessionStorage.setItem('banklist', JSON.stringify(response.banklist));
 
                     // Save leaderboard details in session storage
                     sessionStorage.setItem('myscore', response.leaderboard);
@@ -547,7 +555,7 @@
             event.preventDefault();
             const user = JSON.parse(sessionStorage.getItem('user'));
             const tx_ref = Math.floor(1000 + Math.random() * 9000);
-            const public_key = "{{ env('FLW_PUBLIC_KEY') }}";
+            const public_key = "{{ config('services.flutterwave.public_key') }}";
 
              // Prepare data to send to the backend
             var userData = {
@@ -558,7 +566,7 @@
             FlutterwaveCheckout({
               public_key: public_key,
               tx_ref: tx_ref,
-              amount: 200,
+              amount: 500,
               currency: "NGN",
               payment_options: "card, banktransfer, ussd",
               meta: {
@@ -592,7 +600,7 @@
                 }
                 console.log(requestData);
                 $.ajax({
-                    url: '/api/verify/payment/'+transaction_id,
+                    url: '/api/bank/'+transaction_id,
                     method: 'PUT',
                     data: requestData, // Send the data to the backend
                     headers: {

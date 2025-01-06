@@ -75,4 +75,10 @@ class GuestController extends Controller
     {
         return view('addquestion');
     }
+
+    public function addBank()
+    {
+        return view('addbank');
+    }
+    
 }

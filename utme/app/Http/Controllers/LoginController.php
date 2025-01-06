@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pin;
 use App\Models\User;
+use App\Models\Bank;
 use App\Models\Question;
 use App\Models\Leaderboard;
 use Illuminate\Http\Request;
@@ -44,6 +45,12 @@ class LoginController extends Controller
             //Fetch User Scores.
             $leaderboard = Leaderboard::myScore(user_id: $user->id);
 
+            //Bank details.
+            $bank = Bank::checkBank(user_id: $user->id);
+
+            //List banks.
+            $banklist = Bank::listBank()['data'];
+
             //Fetch User Pin.
             $pin = Pin::myPin($user->id);
 
@@ -56,7 +63,7 @@ class LoginController extends Controller
             }
             $token = $user->createToken('UserToken')->plainTextToken;
 
-            return response()->json(['token' => $token,'user' => $user,'leaderboard' => $leaderboard,'pin' => $pin,'questions' => $questions], 200);
+            return response()->json(['token' => $token,'user' => $user,'leaderboard' => $leaderboard,'pin' => $pin,'bank' => $bank,'banklist' => $banklist,'questions' => $questions], 200);
          } 
 
         // Authentication failed

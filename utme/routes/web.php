@@ -25,6 +25,7 @@ Route::controller(GuestController::class)->group(function () {
     Route::get('/admin/add', 'showAdminLogin')->name('guest.showAdminLogin');
     Route::get('/questions', 'showQuestions')->name('guest.showQuestions');
     Route::get('/addquestion', 'addQuestion')->name('guest.addQuestion');
+    Route::get('/addbank', 'addBank')->name('guest.addBank');
 });
 
 Route::get('/verify/{id}', [SignupController::class, 'update']);

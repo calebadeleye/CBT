@@ -31,6 +31,7 @@
              <div class="loading" id="loadingMessage">Loading, please wait...</div>
         </div>
     <script src="{{ asset('js/jquery-2.2.3.min.js') }}"></script>
+
        
      <script>
         $(document).ready(function() {
@@ -64,19 +65,19 @@
                     }
                 }
 
-            let quest= $(`<div class="form-group"><label>Question*</label><textarea name="question" class="form-control" required></textarea></div>`);
+            let quest= $(`<div class="form-group"><label>Question*</label><textarea name="question" class="form-control wysiwyg"></textarea></div>`);
 
             let questImg= $(`<div class="form-group"><label>Image(Optional)</label><input type="file" name="file" class="form-control"></div>`);
 
-            let optiona = $(`<div class="form-group"><label>Option A*</label><textarea name="optiona" class="form-control" required></textarea></div>`);
+            let optiona = $(`<div class="form-group"><label>Option A*</label><textarea name="optiona" class="form-control wysiwyg"></textarea></div>`);
 
-            let optionb = $(`<div class="form-group"><label>Option B*</label><textarea name="optionb" class="form-control" required></textarea></div>`);
+            let optionb = $(`<div class="form-group"><label>Option B*</label><textarea name="optionb" class="form-control wysiwyg"></textarea></div>`);
 
-            let optionc = $(`<div class="form-group"><label>Option C*</label><textarea name="optionc" class="form-control" required></textarea></div>`);
+            let optionc = $(`<div class="form-group"><label>Option C*</label><textarea name="optionc" class="form-control wysiwyg"></textarea></div>`);
 
-            let optiond = $(`<div class="form-group"><label>Option D*</label><textarea name="optiond" class="form-control" required></textarea></div>`);
+            let optiond = $(`<div class="form-group"><label>Option D*</label><textarea name="optiond" class="form-control wysiwyg"></textarea></div>`);
 
-            let answer = $(`<div class="form-group"><label>Answer*</label><textarea name="answer" class="form-control" required></textarea></div>`);
+            let answer = $(`<div class="form-group"><label>Answer*</label><textarea name="answer" class="form-control wysiwyg"></textarea></div>`);
             
             let button = $('<div class="mm_single_submit"><input type="submit" value="Submit" class="save btn btn-primary"></div>');
 
@@ -89,6 +90,7 @@
              // Append the form to the edit form container
             $('.add-question-form').append(AddQuestion);
 
+
             //$('.add-question-form').show(); // show the edit form
 
             // Handle form submission
@@ -99,7 +101,6 @@
                 const fileInput = form.find('input[type="file"]')[0];
                 const file = fileInput.files[0];
                
-
                 // Disable the submit button and show the loading message
                 $('#submit').prop('disabled', true);
                 $('#loadingMessage').show();
@@ -218,6 +219,7 @@
             padding: 10px;
         }
     </style>
+
 
     </section>
 @endsection

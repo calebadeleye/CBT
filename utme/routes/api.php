@@ -27,5 +27,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::resource('practice',PracticeController::class);
     Route::resource('leaderboard',ExamController::class);
-    Route::resource('verify/payment',PaymentController::class);
+    Route::resource('bank',PaymentController::class);
 });
