@@ -66,11 +66,11 @@
             mybank = [mybank]; // Wrap single object in an array for consistency
         }
 
-        // If mybank is empty or invalid, handle gracefully
-        if (!mybank || mybank.length === 0) {
-            console.error('No valid bank data available');
-            return; // Exit early
-        }
+        // // If mybank is empty or invalid, handle gracefully
+        // if (!mybank || mybank.length === 0) {
+        //     console.error('No valid bank data available');
+        //     return; // Exit early
+        // }
 
         // Target container where the divs will be added
         const bankContainer = $('.bank-details-container'); // Ensure this container exists in your HTML
