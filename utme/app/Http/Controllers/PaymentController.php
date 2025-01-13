@@ -75,27 +75,12 @@ class PaymentController extends Controller
             'name' => 'required|string', 
         ]);
 
-        $FLW_SECRET_KEY = 'FLWSECK-ff77cecdff5358c64403fb809c631315-X';
-
-        $curl = curl_init();
-        $headers = [];
-        $headers[] = 'Content-Type: application/json';
-        $headers[] = 'Authorization: Bearer '.$FLW_SECRET_KEY;
-
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => "https://api.flutterwave.com/v3/transactions/$transaction_id/verify",
-            CURLOPT_HTTPHEADER => $headers,
-        ]);
-
-        $resp = curl_exec($curl);
-        curl_close($curl);
-        $ret = json_decode($resp, true);
+        $ret = Bank::verifyPayment(transaction_id: $transaction_id);
 
         if ($ret['status'] == 'success' && 
             $ret['data']['tx_ref'] == $request->tx_ref && 
             $ret['data']['currency'] == 'NGN' && 
-            $ret['data']['amount'] == 500) {
+            $ret['data']['amount'] == 200) {
 
             //generate PIN and send to user.
             $pin = Pin::create([
@@ -103,7 +88,7 @@ class PaymentController extends Controller
                 'user_id' => User::where('email',$request->email)->value('id'),
             ]);
          Mail::to($request->email)->queue(new PinGeneration($pin->pin,$request->name));
-        return response()->json(['data' => 'Payment Successful'], 500);
+        return response()->json(['data' => 'Payment Successful'], 200);
         }
 
     }

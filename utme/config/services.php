@@ -15,10 +15,11 @@ return [
     */
 
     'flutterwave' => [
-        'secret_key' => 'FLWSECK-ff77cecdff5358c64403fb809c631315-X', // Replace with the actual key
+        'secret_key' => 'FLWSECK-ff77cecdff5358c64403fb809c631315-X',
         'public_key' => 'FLWPUBK-e2172628c845f52aa5270a20de8fb95b-X ',
-        'bank_lists_url' => 'https://api.flutterwave.com/v3/banks/NG', // Replace with your actual URL
-        'bank_resolve_account_number' => 'https://api.flutterwave.com/v3/accounts/resolve', // Replace with your actual URL
+        'bank_lists_url' => 'https://api.flutterwave.com/v3/banks/NG',
+        'bank_resolve_account_number' => 'https://api.flutterwave.com/v3/accounts/resolve',
+        'verify_payment' => 'https://api.flutterwave.com/v3/transactions/',
     ],
 
     'postmark' => [

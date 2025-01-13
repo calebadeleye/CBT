@@ -63,6 +63,7 @@
                             <!-- Multiple select filter  -->
                             <div class="login-wthree my-auto">
                                 @if (!Route::is('guest.showUserBoard') && !Route::is('guest.showUserScores') && !Route::is('guest.showQuestions') && !Route::is('guest.showAdminBoard') && !Route::is('guest.addQuestion') &&
+                                !Route::is('guest.showLeaderBoard') &&
                                 !Route::is('guest.addBank'))
                                     <a href="{{ route('guest.showLogin') }}" class="text-white text-capitalize">
                                         login <span class="fas fa-sign-in-alt flash animated infinite"></span>
@@ -71,6 +72,7 @@
 
                                  @if (Route::is('guest.showUserBoard') || Route::is('guest.showUserScores') || Route::is('guest.showAdminBoard') || Route::is('guest.showQuestions')  ||
                                  Route::is('guest.addQuestion')   ||
+                                 Route::is('guest.showLeaderBoard')   ||
                                  Route::is('guest.addBank'))   
                                     <a href="#" class="text-white text-capitalize {{ Route::is('guest.showQuestions') || 
                                     Route::is('guest.showAdminBoard')||
@@ -566,7 +568,7 @@
             FlutterwaveCheckout({
               public_key: public_key,
               tx_ref: tx_ref,
-              amount: 500,
+              amount: 200,
               currency: "NGN",
               payment_options: "card, banktransfer, ussd",
               meta: {

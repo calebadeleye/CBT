@@ -104,4 +104,34 @@ class Bank extends Model
 
     }
 
+
+
+    /**
+     * verify payment
+     *
+     * @return json
+     */
+    public static function verifyPayment(string $transaction_id)
+    {
+            
+        // Make the HTTP request
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . config('services.flutterwave.secret_key'),
+        ])->get(config('services.flutterwave.verify_payment').$transaction_id."/verify");
+
+        // Handle the response
+        if ($response->successful()) {
+            return $response->json(); // Automatically decodes JSON response
+        }
+        
+        //if verification failed
+        return [
+        'error' => true,
+        'message' => 'Failed to verify payment',
+        'status' => $response->status(),
+        'body' => $response->body(),
+        ];
+
+    }
+
 }
