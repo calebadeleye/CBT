@@ -46,6 +46,7 @@ class Question extends Model
         'CHEM' => 'Chemistry',
         'GEO' => 'Geography',
         'HIS' => 'History',
+        'ACT' => 'Accounts ',
         'AGRIC' => 'Agric Science ',
         'ECO' => 'Economics ',
         'CRK' => 'Christian Religious Knowledge ',
