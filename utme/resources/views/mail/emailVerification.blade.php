@@ -9,7 +9,7 @@ Verify Your Email Address
 
 <x-mail::panel>
 If the link above does not work, please copy and paste the following URL into your browser:
-<a href="$fullPathUrl">{{$fullPathUrl}}</a>
+<a href="{{ $fullPathUrl }}">{{$fullPathUrl}}</a>
 </x-mail::panel>
 
 Best regards,<br>

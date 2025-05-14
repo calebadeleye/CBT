@@ -55,10 +55,9 @@ class Question extends Model
         'FRENCH' => 'French ',
         'ARABIC' => 'Arabic ',
         'HAUSA' => 'Hausa ',
-        'IGBO' => 'Igbo ',
+        'IGBO' => 'Igbo',
         'YORUBA' => 'Yoruba ',
         'MUSIC' => 'Music ',
-        'YORUBA' => 'Yoruba ',
         'COMMERCE' => 'Commerce ',
     ];
 

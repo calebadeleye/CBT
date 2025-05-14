@@ -20,6 +20,7 @@ return [
         'bank_lists_url' => 'https://api.flutterwave.com/v3/banks/NG',
         'bank_resolve_account_number' => 'https://api.flutterwave.com/v3/accounts/resolve',
         'verify_payment' => 'https://api.flutterwave.com/v3/transactions/',
+        'transfer_url' => 'https://api.flutterwave.com/v3/transfers',
     ],
 
     'postmark' => [

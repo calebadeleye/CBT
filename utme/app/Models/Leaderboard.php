@@ -77,4 +77,10 @@ class Leaderboard extends Model
 
     }
 
+    // Releationship
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

@@ -2,12 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Facades\Request;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SignupController;
-use App\Http\Controllers\PaymentController;
 
 
 Route::controller(GuestController::class)->group(function () {

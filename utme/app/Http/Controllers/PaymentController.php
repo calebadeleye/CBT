@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Pin;
 use App\Models\User;
 use App\Models\Bank;
+use App\Models\Wallet;
 use App\Mail\PinGeneration;
 use Illuminate\Http\Request;
 
@@ -75,21 +77,25 @@ class PaymentController extends Controller
             'name' => 'required|string', 
         ]);
 
-        $ret = Bank::verifyPayment(transaction_id: $transaction_id);
+        $ret = Payment::verifyPayment(transaction_id: $transaction_id);
 
         if ($ret['status'] == 'success' && 
             $ret['data']['tx_ref'] == $request->tx_ref && 
             $ret['data']['currency'] == 'NGN' && 
-            $ret['data']['amount'] == 200) {
+            $ret['data']['amount'] == 1000) {
 
-            //generate PIN and send to user.
-            $pin = Pin::create([
-                'pin' => rand(00000,99999),
-                'user_id' => User::where('email',$request->email)->value('id'),
-            ]);
-         Mail::to($request->email)->queue(new PinGeneration($pin->pin,$request->name));
-        return response()->json(['data' => 'Payment Successful'], 200);
-        }
+                //generate PIN and send to user.
+                $pin = Pin::create([
+                    'pin' => rand(00000,99999),
+                    'user_id' => User::where('email',$request->email)->value('id'),
+                ]);
+                Wallet::saveToWallet(
+                    amount:  $ret['data']['amount'],
+                    type: Wallet::TYPE_CREDIT,
+                    user_id:  $ret['data']['tx_ref']);
+                Mail::to($request->email)->queue(new PinGeneration($pin->pin,$request->name));
+                return response()->json(['data' => 'Payment Successful'], 200);
+            }
 
     }
 

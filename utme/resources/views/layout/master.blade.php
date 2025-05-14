@@ -568,7 +568,7 @@
             FlutterwaveCheckout({
               public_key: public_key,
               tx_ref: tx_ref,
-              amount: 200,
+              amount: 1000,
               currency: "NGN",
               payment_options: "card, banktransfer, ussd",
               meta: {

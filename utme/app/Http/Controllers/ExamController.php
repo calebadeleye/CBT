@@ -19,7 +19,7 @@ class ExamController extends Controller
             $data = Leaderboard::getScores();
             $scores = json_encode($data);
             return response()->json(['scores' => $scores], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getResponse()->getStatusCode() ?? 500);
         }
     }
@@ -51,7 +51,7 @@ class ExamController extends Controller
             //save user score to leaderboard
             Leaderboard::saveScore(score: $request->score, user_id: $request->user_id);
                 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
               return response()->json(['error' => $e->getMessage()], $e->getResponse()->getStatusCode() ?? 500);
         }
     }
