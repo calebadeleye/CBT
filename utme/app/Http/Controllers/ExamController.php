@@ -20,9 +20,10 @@ class ExamController extends Controller
             $scores = json_encode($data);
             return response()->json(['scores' => $scores], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getResponse()->getStatusCode() ?? 500);
+            return response()->json(['error' => $e->getMessage()],500);
         }
     }
+
 
 
     /**
