@@ -60,18 +60,18 @@ class Leaderboard extends Model
      */
     public static function getScores()
     {
-        $scores = DB::table('leaderboards')
-            ->join('users', 'users.id', '=', 'leaderboards.user_id')
-            ->select(
-                'users.name', 
-                'leaderboards.user_id', 
-                DB::raw('MAX(leaderboards.score) AS max_score'), 
-                DB::raw("DATE_FORMAT(leaderboards.created_at, '%Y-%m') AS month")
-            )
-            ->groupBy('leaderboards.user_id', 'month')
-            ->orderBy('month', 'desc')
-            ->orderBy('max_score', 'desc')
-            ->get();
+       $scores = DB::table('leaderboards')
+                ->join('users', 'users.id', '=', 'leaderboards.user_id')
+                ->select(
+                    'users.name',
+                    'leaderboards.user_id',
+                    DB::raw('MAX(leaderboards.score) AS max_score'),
+                    DB::raw("DATE_FORMAT(leaderboards.created_at, '%Y-%m') AS month")
+                )
+                ->groupBy('leaderboards.user_id', 'users.name', 'month') // ← Fix here
+                ->orderBy('month', 'desc')
+                ->orderBy('max_score', 'desc')
+                ->get();
 
         return $scores;
 
