@@ -89,7 +89,7 @@
             <div class="container">
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <h1><a class="navbar-brand" href="/">
-                            <span>Utme</span>.com.ng
+                            <span>UTME</span>.com.ng
                             <i class="w3-spacing"></i>
                         </a></h1>
                     <button class="navbar-toggler ml-lg-auto ml-sm-5" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -140,7 +140,7 @@
                         <h2 class="mr-4">stay connected :</h2>
                         <ul class="social-iconsv2 agileinfo">
                             <li>
-                                <a href="#">
+                                <a href="https://facebook.com/postume">
                                     <i class="fab fa-facebook-f"></i>
                                 </a>
                             </li>
@@ -160,8 +160,7 @@
                 </div>
                 <div class="col-lg-6 my-lg-auto mt-3">
                     <div class="cpy-right text-lg-right text-center">
-                        <p class="text-secondary">© 2024 <a href="https://naitalk.com">Naitalk.com</a>. All rights reserved | Design by
-                            <a href="http://w3layouts.com"> W3layouts.</a> | <a href="{{ route('guest.showTerms') }}">Terms & Conditions</a> | <a href="">Privacy Policy</a>
+                        <p class="text-secondary">© {{ date('Y') }} <a href="https://naitalk.com">Naitalk.com</a>.|<a href="{{ route('guest.showTerms') }}">Terms & Conditions</a> | <a href="">Privacy Policy</a>
                         </p>
                     </div>
                 </div>
@@ -579,7 +578,7 @@
                 name: userData.name,
               },
               customizations: {
-                title: "Caleb Adeleye",
+                title: "UTME.COM.NG",
                 description: "UTME CBT PAYMENT",
                 logo: "https://utme.com.ng/favicon/favicon-32x32.png",
               },

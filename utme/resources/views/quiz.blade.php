@@ -7,6 +7,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Subjects - UTME</title>
     <link rel="stylesheet" type="text/css" href="{{ asset('main.css') }}"/>
+    <link rel="icon" href="{{ asset('favicon/android-chrome-192x192.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon/android-chrome-512x512.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon/apple-touch-icon.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon/favicon-16x16.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon/favicon-32x32.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon/favicon.ico') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
   <style>
         #timer {

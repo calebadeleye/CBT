@@ -73,54 +73,82 @@ $('main').on('click','#button-submit-quest', function (event){
 });
 
 //get random questions from user selected subjects
-function getRandomQuestions(selectedSubjects, questions, numQuestions) {
-    // Filter questions based on selected subjects
-    const filteredQuestions = questions.filter(q => selectedSubjects.includes(q.subject));
+function getRandomQuestions(selectedSubjects, questions, numQuestionsPerSubject) {
+    const groupedQuestions = [];
 
-    // Shuffle the filtered questions
-    const shuffledQuestions = filteredQuestions.sort(() => 0.5 - Math.random());
+    selectedSubjects.forEach(subject => {
+        // Get and shuffle questions for this subject
+        const subjectQuestions = questions
+            .filter(q => q.subject === subject)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, numQuestionsPerSubject); // Adjust to your per-subject limit
 
-    // Get the desired number of random questions
-    return shuffledQuestions.slice(0, numQuestions);
+        groupedQuestions.push(...subjectQuestions);
+    });
+
+    return groupedQuestions;
 }
+
 
 /* sets initial values to zero for the question number and score */
 
 let qNumber = 0;
 let score = 0;
 
-/* begins displaying quiz questions until last question has been displayed, then calls the displayResults function */
 function generateQuizQuestion() {
-    if (qNumber < randomQuestions.length) {
-    let question =$(`<form class ="js-quiz-form">
-  <fieldset>
-    <legend class="question">
-        ${randomQuestions[qNumber].question}
-        ${randomQuestions[qNumber].image ? 
-            `<div class="image-container">
-                <img src="${randomQuestions[qNumber].image}"  onerror="this.style.display='none';"/>
-             </div>` 
-            : ''
-        }
-    </legend>
 
-    <ul class="radiogroup" role="radiogroup" aria-labelledby="question"></ul>`);
-    let answers = randomQuestions[qNumber].options.map(function(answerValue, answerIndex){
-        return `<label for="${answerValue}"><input type="radio" id="${answerValue}" name="answer" tabindex="${answerIndex}" value="${answerValue}" aria-checked="false" required>${answerValue}</label></fieldset><br>`;
-    });
-    let button = $(`<button type="submit" style="width : 100%;padding : 10px;" id ="button-submit">Submit</button></form>`)
-    $('.js-quiz').append(question);
-    $('.radiogroup').append(answers, button);
-    questionNumber();
-    } else {
+     if (qNumber == randomQuestions.length) {
         displayResults();
+        return;
     }
+
+        let currentQuestion = randomQuestions[qNumber];
+        // Always clear previous content
+
+        // Always show the current subject header
+        let subject = $(`<h2 class="subject-header">${currentQuestion.subject.toUpperCase()}</h2>`);
+
+        // Build the question form
+        let question = $(`
+            <form class="js-quiz-form">
+                <fieldset>
+                    <legend class="question">
+                        ${currentQuestion.question}
+                        ${currentQuestion.image ? `
+                            <div class="image-container">
+                                <img src="${currentQuestion.image}" onerror="this.style.display='none';"/>
+                            </div>` : ''}
+                    </legend>
+                    <ul class="radiogroup" role="radiogroup" aria-labelledby="question"></ul>
+                </fieldset>
+            </form>
+        `);
+
+        // Build answers
+        let answers = currentQuestion.options.map((answerValue, answerIndex) => {
+            return `
+                <label for="${answerValue}">
+                    <input type="radio" id="${answerValue}" name="answer" tabindex="${answerIndex}" value="${answerValue}" required>
+                    ${answerValue}
+                </label><br>`;
+        });
+
+        // Submit button
+        let button = $(`<button type="submit" style="width:100%; padding:10px;" id="button-submit">Submit</button>`);
+
+        // Append everything
+        $('.js-quiz').append(subject,question);
+        $('.radiogroup').append(answers, button);
+
+        questionNumber();
 }
+
 
 
 /* event listener for the next question button, calls the generateQuizQuestion function to display the next question */
 function nextQuestion() {
         $('.js-answer').empty();
+        $('.subject-header').remove();
         $('.js-quiz-form').empty();
         qNumber++;
         generateQuizQuestion();

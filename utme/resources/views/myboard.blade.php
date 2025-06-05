@@ -65,7 +65,7 @@
                     </a>
                     </div>
 
-                <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
+                <!-- <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
                      <a href="{{ route('guest.addBank') }}" title="click to add bank details">
                         <div class="counter py-4 px-3 bg1-theme">
                             <i class="fa fa-piggy-bank"></i>
@@ -74,7 +74,7 @@
                                 <a href="{{ route('guest.addBank')  }}" class="btn btn-success btn-sm">Click Here</a>
                         </div>
                     </a>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
