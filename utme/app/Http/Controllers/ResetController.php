@@ -24,9 +24,7 @@ class ResetController extends Controller
             if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
             }
-
-            $user = User::where('email',$request->email)->firstOrfail();
-            Reset::SendResetLink($user);
+            Reset::SendResetLink($request->email);
             return response()->json(['data' => 'password reset link has been sent to your email'], 200);
             
         } catch (Exception $e) {

@@ -33,16 +33,14 @@ class Reset extends Model
      *
      * @var Model
      */
-    public static function SendResetLink(User $user)
+    public static function SendResetLink(String $email)
     {
-
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $length = 20;
         $url = substr(str_shuffle(str_repeat($characters, ceil($length / strlen($characters)))), 1, $length);
-        self::create([
-            'email' => $user->email,
-            'token' => $url,
-        ]);
+
+        $user = User::where('email',$email)->firstOrfail();
+        $user->update(['token' => $url]);
         $mail =  Mail::to($user->email)->queue(new PasswordReset($url,$user->name));
     }
 

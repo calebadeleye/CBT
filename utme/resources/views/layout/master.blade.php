@@ -445,8 +445,6 @@
                 var requestData = {
                     email: emailValue,
                 };
-
-                console.log(requestData);
                 
                        // Disable the submit button and show the loading message
                     $('#submit').prop('disabled', true);
