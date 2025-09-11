@@ -24,7 +24,9 @@ class ResetController extends Controller
             if ($validator->fails()) {
                     return response()->json(['errors' => $validator->errors()], 422);
             }
-            Reset::SendResetLink($request->email);
+
+            $user = User::where('email',$request->email)->firstOrfail();
+            Reset::SendResetLink($user);
             return response()->json(['data' => 'password reset link has been sent to your email'], 200);
             
         } catch (Exception $e) {
@@ -41,7 +43,7 @@ class ResetController extends Controller
             Reset::where('token',$token)->firstOrfail();
             return view('reset',['token' => $token]);
         } catch (Exception $e) {
-            dd("Something creepy happened");
+            dd("Something creepy happened,this shouldn't have happened");
         }
     }
 
