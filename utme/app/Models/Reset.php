@@ -46,8 +46,7 @@ class Reset extends Model
             'token' => $token,
         ]);
 
-        $url = '/reset/' . $token;
-        $mail =  Mail::to($user->email)->queue(new PasswordReset($url,$user->name));
+        $mail =  Mail::to($user->email)->queue(new PasswordReset($token,$user->name));
     }
 
 }
