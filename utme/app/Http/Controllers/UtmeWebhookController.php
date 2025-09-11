@@ -16,19 +16,17 @@ class UtmeWebhookController extends Controller
         // Laravel automatically parses JSON body into $request->all()
         $payload = $request->all();
 
-        \Log::info('UTME Webhook received: ', $payload);
-
-        $data = $payload['data'] ?? null;
-        if (!$data) {
+        if (!$payload) {
             return response()->json(['error' => 'Invalid payload'], 400);
         }
 
-        $status   = $data['status'] ?? null;
-        $txRef    = $data['tx_ref'] ?? null;
-        $currency = $data['currency'] ?? null;
-        $amount   = $data['amount'] ?? null;
-        $email    = $data['customer']['email'] ?? null;
-        $name     = $data['customer']['name'] ?? null;
+        $status   = $payload['status'] ?? null;
+        $txRef    = $payload['tx_ref'] ?? null;
+        $currency = $payload['currency'] ?? null;
+        $amount   = $payload['amount'] ?? null;
+        $email    = $payload['customer']['email'] ?? null;
+        $name     = $payload['customer']['name'] ?? null;
+
 
         // Validate payment
         if ($status === 'successful' && $currency === 'NGN' && $amount == 1000) {
