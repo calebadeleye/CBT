@@ -70,32 +70,9 @@ class PaymentController extends Controller
 
 
 
-    public function update(Request $request, string $transaction_id)
+    public function update(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|exists:users,email', 
-            'name' => 'required|string', 
-        ]);
-
-        $ret = Payment::verifyPayment(transaction_id: $transaction_id);
-
-        if ($ret['status'] == 'success' && 
-            $ret['data']['tx_ref'] == $request->tx_ref && 
-            $ret['data']['currency'] == 'NGN' && 
-            $ret['data']['amount'] == 1000) {
-
-                //generate PIN and send to user.
-                $pin = Pin::create([
-                    'pin' => rand(00000,99999),
-                    'user_id' => User::where('email',$request->email)->value('id'),
-                ]);
-                Wallet::saveToWallet(
-                    amount:  $ret['data']['amount'],
-                    type: Wallet::TYPE_CREDIT,
-                    user_id:  $ret['data']['tx_ref']);
-                Mail::to($request->email)->queue(new PinGeneration($pin->pin,$request->name));
-                return response()->json(['data' => 'Payment Successful'], 200);
-            }
+      return response()->json(['data' => 'We are processing your payemnt, your PIN will be sent to your email address'], 200);
 
     }
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\SignupController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\PracticeController;
+use App\Http\Controllers\UtmeWebhookController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,3 +30,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('leaderboard',ExamController::class);
     Route::resource('bank',PaymentController::class);
 });
+
+// webhook processed from NAITALK
+Route::post('/webhook/flutterwave', [UtmeWebhookController::class, 'handleWebhook']);

@@ -569,22 +569,32 @@
               currency: "NGN",
               payment_options: "card, banktransfer, ussd",
               meta: {
-                source: "UTME-Myboard",
+                source: "UTME",
               },
               customer: {
                 email: userData.email,
                 name: userData.name,
               },
               customizations: {
-                title: "UTME.COM.NG",
+                title: "NAITALK",
                 description: "UTME CBT PAYMENT",
-                logo: "https://utme.com.ng/favicon/favicon-32x32.png",
+                logo: " https://naitalk.com/assets/images/logoIcon/favicon.png",
               },
+               subaccounts: [
+                {
+                  id: "RS_2BF23DD4EAAFD521AAE7FDBD4CE205BE", // RHM
+                  transaction_split_ratio: 10 
+                },
+                {
+                  id: "RS_F3CB863DF1D42609A99BE53CDFFEC9B5",
+                  transaction_split_ratio: 80 // NAITALK
+                }
+              ],
               callback: function (data){
                 sendCallback(tx_ref,userData,data.transaction_id);
               },
               onclose: function() {
-                //alert("Payment cancelled!");
+                alert("Payment cancelled!");
               }
             });
 
@@ -597,7 +607,6 @@
                     tx_ref: tx_ref,
                     transaction_id: transaction_id
                 }
-                console.log(requestData);
                 $.ajax({
                     url: '/api/bank/'+transaction_id,
                     method: 'PUT',
