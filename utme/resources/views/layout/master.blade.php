@@ -553,7 +553,7 @@
         $('.make-payment').on('click', function(event) {
             event.preventDefault();
             const user = JSON.parse(sessionStorage.getItem('user'));
-            const tx_ref = Math.floor(1000 + Math.random() * 9000);
+            const tx_ref = "UTME_" + Math.floor(1000 + Math.random() * 9000) // UTME
             const public_key = "{{ config('services.flutterwave.public_key') }}";
 
              // Prepare data to send to the backend
@@ -567,7 +567,6 @@
               tx_ref: tx_ref,
               amount: 1000,
               currency: "NGN",
-              payment_options: "card, banktransfer, ussd",
               meta: {
                 source: "UTME",
               },
@@ -582,19 +581,14 @@
               },
                subaccounts: [
                 {
-                  id: "RS_2BF23DD4EAAFD521AAE7FDBD4CE205BE", // RHM
-                  transaction_split_ratio: 10 
-                },
-                {
-                  id: "RS_F3CB863DF1D42609A99BE53CDFFEC9B5",
-                  transaction_split_ratio: 80 // NAITALK
+                  id: "RS_F3CB863DF1D42609A99BE53CDFFEC9B5",//NAITALK
                 }
               ],
               callback: function (data){
                 sendCallback(tx_ref,userData,data.transaction_id);
               },
               onclose: function() {
-                alert("Payment cancelled!");
+                //alert("Payment cancelled!");
               }
             });
 
