@@ -549,75 +549,44 @@
 
         <script>
         /*Initiate Payment */
-
         $('.make-payment').on('click', function(event) {
             event.preventDefault();
             const user = JSON.parse(sessionStorage.getItem('user'));
-            const tx_ref = "UTME_" + Math.floor(1000 + Math.random() * 9000) // UTME
+            const tx_ref = "UTME_" + Math.floor(1000 + Math.random() * 9000); // unique reference
             const public_key = "{{ config('services.flutterwave.public_key') }}";
 
-             // Prepare data to send to the backend
-            var userData = {
-                name: user.name,
-                email: user.email,
-            };
-
             FlutterwaveCheckout({
-              public_key: public_key,
-              tx_ref: tx_ref,
-              amount: 1000,
-              currency: "NGN",
-              meta: {
-                source: "UTME",
-              },
-              customer: {
-                email: userData.email,
-                name: userData.name,
-              },
-              customizations: {
-                title: "NAITALK",
-                description: "UTME CBT PAYMENT",
-                logo: " https://naitalk.com/assets/images/logoIcon/favicon.png",
-              },
-               subaccounts: [
-                {
-                  id: "RS_F3CB863DF1D42609A99BE53CDFFEC9B5",//NAITALK
-                }
-              ],
-              callback: function (data){
-                sendCallback(tx_ref,userData,data.transaction_id);
-              },
-              onclose: function() {
-                //alert("Payment cancelled!");
-              }
-            });
-
-          function sendCallback(tx_ref,user,transaction_id) {
-
-                const token =  sessionStorage.getItem('login_token');
-                requestData = {
-                    name: user.name,
+                public_key: public_key,
+                tx_ref: tx_ref,
+                amount: 1000,
+                currency: "NGN",
+                meta: {
+                    source: "UTME",
+                },
+                customer: {
                     email: user.email,
-                    tx_ref: tx_ref,
-                    transaction_id: transaction_id
-                }
-                $.ajax({
-                    url: '/api/bank/'+transaction_id,
-                    method: 'PUT',
-                    data: requestData, // Send the data to the backend
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        console.log(response.data); 
-                    },
-                    error: function(xhr, status, error) {
-                        console.error( error);
+                    name: user.name,
+                },
+                customizations: {
+                    title: "NAITALK",
+                    description: "UTME CBT PAYMENT",
+                    logo: "https://naitalk.com/assets/images/logoIcon/favicon.png",
+                },
+                subaccounts: [
+                    {
+                        id: "RS_F3CB863DF1D42609A99BE53CDFFEC9B5", // NAITALK subaccount
                     }
-                });
-          }
+                ],
+                callback: function (data) {
+                    // Just notify the user – webhook handles verification + PIN
+                    alert("Payment received successfully. Please check your email for your UTME PIN.");
+                },
+                onclose: function() {
+                    alert("Payment window closed. If you didn’t complete payment, please try again.");
+                }
+            });
         });
+
 
     </script>
 
