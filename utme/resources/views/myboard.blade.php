@@ -27,7 +27,7 @@
                     <h3 class="main-title-agile" id="username"></h3>
                     <span class="bg-theme"></span>
                 </div>
-                <div class="row stat-row  position-relative text-center">
+                <div class="row position-relative text-center">
 
                     <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
                       <div class="counter py-4 px-3 bg5-theme">
