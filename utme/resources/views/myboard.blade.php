@@ -28,7 +28,16 @@
                     <span class="bg-theme"></span>
                 </div>
                 <div class="row stat-row  position-relative text-center">
-                    <img src="images/slide.jpg" alt="" class="img-fluid position-absolute" />
+
+                    <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
+                      <div class="counter py-4 px-3 bg5-theme">
+                        <i class="fas fa-key"></i>
+                        <p class="count-text text-capitalize">Active PIN</p>
+                        <div id="active-pin" class="mt-2 font-weight-bold text-primary"></div>
+                      </div>
+                    </div>
+ 
+
                     <div class="col-lg-3 col-md-6">
                         <div class="counter py-4 px-3 bg4-theme">
                             <i class="fas fa-shopping-cart"></i>
@@ -74,7 +83,7 @@
                                 <a href="{{ route('guest.addBank')  }}" class="btn btn-success btn-sm">Click Here</a>
                         </div>
                     </a>
-                    </div> 
+                    </div>
 
                 </div>
             </div>
@@ -101,21 +110,26 @@
             document.addEventListener('DOMContentLoaded', (event) => {
                 // Retrieve the pin from session storage
                 const pin = JSON.parse(sessionStorage.getItem('mypin'));
+                console.log(pin);
+
+                if (pin && pin.status === "open") {
+                    document.getElementById('active-pin').textContent = `PIN: ${pin.pin}`;
+                } else {
+                    document.getElementById('active-pin').textContent = "No Active PIN";
+                }
+
 
                 // Check if pin exists
                 if (pin) {
                     // Get the element and set the `data-to` attribute
                     const countElement = document.querySelector('.pin');
                     if (countElement) {
-                        console.log(pin.count);
                         countElement.setAttribute('data-to', 10-pin.count);
                     }
                 }
 
                  // Retrieve the score from session storage
                 const scores = JSON.parse(sessionStorage.getItem('myscore'));
-                
-                console.log(scores[0]['score']);
 
                 // Check if score exists
                 if (scores[0]['score']) {
