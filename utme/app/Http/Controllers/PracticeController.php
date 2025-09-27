@@ -15,53 +15,66 @@ class PracticeController extends Controller
      */
     public function store(Request $request)
     {
-          try {
-        $validator = Validator::make($request->all(), [
-            'subject' => 'required|array|min:4|max:4', // Ensure exactly 4 subjects
-            'pin' => 'required|string|exists:pins,pin',
-            'user_id' => 'required|integer'
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'subject' => 'required|array|min:4|max:4', // exactly 4 subjects
+                'pin'     => 'required|string|exists:pins,pin',
+                'user_id' => 'required|integer'
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // Verify if pin has exceeded limit
-        if (Pin::checkPinLimit($request->pin)) {
-            return response()->json(['errors' => ['pin' => ['PIN usage exceeded Limit']]], 422);
-        }
-
-        $questions = [];
-
-        foreach ($request->subject as $subject) {
-            // If subject is English → 60, else 40
-            $limit = (strtolower($subject) === 'english') ? 60 : 40;
-
-            $subjectQuestions = Question::where('subject', $subject)
-                ->inRandomOrder()
-                ->take($limit)
-                ->get();
-
-            foreach ($subjectQuestions as $question) {
-                $question['user_answer'] = null;
-                $question['score'] = null;
-                $questions[] = $question;
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
             }
+
+            // Check PIN limit
+            if (Pin::checkPinLimit($request->pin)) {
+                return response()->json(['errors' => ['pin' => ['PIN usage exceeded Limit']]], 422);
+            }
+
+            $questions = collect();
+
+            foreach ($request->subject as $subjectCode) {
+                $limit = ($subjectCode === 'ENG') ? 60 : 40;
+
+                $subjectQuestions = Question::where('subject', $subjectCode)
+                    ->inRandomOrder()
+                    ->limit($limit)
+                    ->get();
+
+                if ($subjectQuestions->count() < $limit) {
+                    return response()->json([
+                        'errors' => [
+                            'subject' => ["Not enough questions for subject {$subjectCode}. Needed {$limit}, found {$subjectQuestions->count()}."]
+                        ]
+                    ], 422);
+                }
+
+                // shuffle inside subject and add user_answer + score fields
+                $subjectQuestions = $subjectQuestions->shuffle()->map(function ($q) {
+                    $q->user_answer = null;
+                    $q->score = null;
+                    return $q;
+                })->values();
+
+                // Concatenate instead of mixing all
+                $questions = $questions->concat($subjectQuestions);
+            }
+
+            // Final validation
+            if ($questions->count() !== 180) {
+                return response()->json([
+                    'errors' => ['subject' => ["Total questions is {$questions->count()} instead of 180. Check for duplicates or missing data."]]
+                ], 422);
+            }
+
+            // Increment pin usage
+            Pin::incrementPin($request->pin);
+
+            return response()->json(['data' => $questions->values()], 200);
+
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?? 500);
         }
-
-        // Ensure the total is exactly 180
-        $questions = collect($questions)->shuffle()->take(180)->values();
-
-        // Increment pin usage
-        Pin::incrementPin($request->pin);
-
-        return response()->json(['data' => $questions], 200);
-
-    } catch (Exception $e) {
-        return response()->json(['error' => $e->getMessage()], $e->getCode() ?? 500);
     }
 
-
-        
-    }
 }
