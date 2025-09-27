@@ -546,7 +546,7 @@
         });
 
     </script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
         /*Initiate Payment */
         $('.make-payment').on('click', function(event) {
@@ -578,11 +578,20 @@
                     }
                 ],
                 callback: function (data) {
-                    // Just notify the user – webhook handles verification + PIN
-                    alert("Payment received successfully. Please check your email for your UTME PIN.");
+                     Swal.fire({
+                            title: '🎉 Payment Successful!',
+                            html: `
+                                <p>Your UTME PIN has been generated and sent to your email.</p>
+                                <p><b>⚠️ If you don’t see the email or your dashboard doesn’t show your new PIN, please log out and log back in to refresh your account.</b></p>
+                            `,
+                            icon: 'success',
+                            confirmButtonText: 'Okay, Got it!',
+                            confirmButtonColor: '#74bc2d',
+                            allowOutsideClick: false,
+                        });
                 },
                 onclose: function() {
-                    alert("Payment window closed. If you didn’t complete payment, please try again.");
+                    //
                 }
             });
         });

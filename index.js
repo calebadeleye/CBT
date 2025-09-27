@@ -29,65 +29,69 @@ $('.radiogroup').append(subjectListItems,pinForm, button);
 
 
 
-$('main').on('click','#button-submit-quest', function (event){
-     event.preventDefault();
+$('main').on('click', '#button-submit-quest', function (event) {
+    event.preventDefault();
 
     let pinValue = $('input[name="pin"]').val();
-    var selectedSubjects = [];
-    $('input[name="subject"]:checked').each(function() {
-    selectedSubjects.push($(this).val()); 
+    let selectedSubjects = [];
+    $('input[name="subject"]:checked').each(function () {
+        selectedSubjects.push($(this).val());
     });
 
-    let selectedSubs = $('input[name="subject"]:checked').length; 
-    if (selectedSubs !== 4) {
-         alert('Please select 4 subjects only.');
-         return; // Exit the function if the condition is not met
+    // Ensure exactly 4 subjects
+    if (selectedSubjects.length !== 4) {
+        alert('Please select 4 subjects only.');
+        return;
     }
 
-    //check if PIN is valid
+    // Validate PIN
     if (pinValue !== pin.pin) {
         alert('Invalid PIN.');
-        return; // Exit the function if the condition is not met
- 
+        return;
     }
 
-    // Check if pin exists
     if (pin.count == 10) {
-        alert('You have exceeded your PIN Limit. please purchase another PIN from your dashboard.');
-        return; // Exit the function if the condition is not met
+        alert('You have exceeded your PIN Limit. Please purchase another PIN from your dashboard.');
+        return;
     }
- 
-    $('.start-quiz').hide(); // Hide the section with the class 'start-quiz'
-    $('.js-quiz-form').empty();
-    
 
-    let newvalue = pin.count+1;
-    pin.count = newvalue;
-
-    // Save the updated pin count back to session storage
+    // Increment pin usage
+    pin.count++;
     sessionStorage.setItem('mypin', JSON.stringify(pin));
-    randomQuestions = getRandomQuestions(selectedSubjects,questions,180);
-    generateQuizQuestion();
-    startTimer();
-      
-});
 
-//get random questions from user selected subjects
-function getRandomQuestions(selectedSubjects, questions, numQuestionsPerSubject) {
-    const groupedQuestions = [];
+    // Hide quiz intro and reset form
+    $('.start-quiz').hide();
+    $('.js-quiz-form').empty();
 
-    selectedSubjects.forEach(subject => {
-        // Get and shuffle questions for this subject
-        const subjectQuestions = questions
-            .filter(q => q.subject === subject)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, numQuestionsPerSubject); // Adjust to your per-subject limit
-
-        groupedQuestions.push(...subjectQuestions);
+    // 🔹 Fetch questions from API
+    $.ajax({
+        url: '/api/practice',
+        method: 'POST',
+        data: {
+            subject: selectedSubjects,
+            pin: pinValue,
+            user_id: user.id,
+        },
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+        beforeSend: function () {
+            // Show a loader (optional)
+            $('.js-quiz-form').html('<p>Loading questions...</p>');
+        },
+        success: function (response) {
+            // response.questions should contain 180 randomized questions
+            randomQuestions = response.data;
+            generateQuizQuestion();
+            startTimer();
+        },
+        error: function (xhr) {
+            let err = xhr.responseJSON?.message || "Something went wrong. Please try again.";
+            alert(xhr.responseText);
+        }
     });
-
-    return groupedQuestions;
-}
+});
 
 
 /* sets initial values to zero for the question number and score */
