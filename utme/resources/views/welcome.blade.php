@@ -58,6 +58,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-12">
@@ -70,6 +71,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <a href="{{ route('guest.showTerms') }}">By submitting, you agree to our Terms & Conditions.</a>
+
                     <div class="mt-4">
                         <button type="submit" class="btn btn-agile btn-block w-100" id="submit">register</button>
                         <div class="loading" id="loadingMessage">Loading, please wait...</div>

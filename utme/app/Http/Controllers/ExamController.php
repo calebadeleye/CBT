@@ -16,9 +16,8 @@ class ExamController extends Controller
     public function index()
     {
         try {
-            $data = Leaderboard::getScores();
-            $scores = json_encode($data);
-            return response()->json(['scores' => $scores], 200);
+            $data = Leaderboard::getScores(10);
+            return response()->json($data, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()],500);
         }

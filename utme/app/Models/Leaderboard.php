@@ -58,7 +58,7 @@ class Leaderboard extends Model
      *
      * @return collection
      */
-    public static function getScores()
+    public static function getScores($perPage)
     {
        $scores = DB::table('leaderboards')
                 ->join('users', 'users.id', '=', 'leaderboards.user_id')
@@ -71,7 +71,7 @@ class Leaderboard extends Model
                 ->groupBy('leaderboards.user_id', 'users.name', 'month') // ← Fix here
                 ->orderBy('month', 'desc')
                 ->orderBy('max_score', 'desc')
-                ->get();
+                ->paginate($perPage);
 
         return $scores;
 

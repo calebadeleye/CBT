@@ -7,8 +7,8 @@
                 <div class="carousel-inner">
                     <div class="carousel-item bg1 active">
                         <div class="bnr-text-wthree">
-                            <h3 class="b-w3ltxt">the perfect place to </h3>
-                            <p class="mx-auto text-capitalize mt-2 text-white">start your journey into higher institution</p>
+                            <h3 class="b-w3ltxt">Perfect place to </h3>
+                            <p class="mx-auto text-capitalize mt-2 text-white">start your journey to success</p>
                         </div>
                     </div>
                     <!-- slider text -->
@@ -21,8 +21,8 @@
                     <!-- slider text -->
                     <div class="carousel-item bg3">
                         <div class="bnr-text-wthree">
-                            <h3 class="b-w3ltxt">Challenge Yourself to Succeed</h3>
-                            <p class="mx-auto text-capitalize mt-2 text-white">prepare and challenge your self to succeed</p>
+                            <h3 class="b-w3ltxt">Challenge Yourself</h3>
+                            <p class="mx-auto text-capitalize mt-2 text-white">prepare and succeed</p>
                         </div>
                     </div>
                     <!-- slider text -->

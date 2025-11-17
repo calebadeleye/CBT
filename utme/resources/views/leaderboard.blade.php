@@ -20,7 +20,7 @@
     <!-- //banner -->
 
 @section('content')
-    <!-- pricing -->
+    <!-- Leaderboard -->
     <section class="wthree-row py-5" id="pricing">
         <div class="container py-lg-5">
             <div class="title-section pb-4">
@@ -45,62 +45,71 @@
             </div>
         </div>
 
+    <script>
+        let currentPage = 1;
 
-        <script>
-            //show user pin count
-            document.addEventListener('DOMContentLoaded', (event) => {
+        function loadScores(page = 1) {
+            $.ajax({
+                url: `/api/leaderboard/show?page=${page}`,
+                method: 'GET',
+                success: function(response) {
+                    const tableBody = document.getElementById('scoreTableBody');
+                    tableBody.innerHTML = ""; // Clear old rows
 
-                $.ajax({
-                    url: '/api/leaderboard/show',
-                    method: 'GET',
-                    headers: {
-                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                          // Reference to the table body
-                          const tableBody = document.getElementById('scoreTableBody');
-                          // Retrieve user details from session storage
-                          const scores = JSON.parse(response.scores);
+                    response.data.forEach(item => {
+                        const row = document.createElement('tr');
 
-                          console.log(scores);
-                        // Loop through the scores and create rows
-                        scores.forEach(item => {
-                            const row = document.createElement('tr');
-                             // Extract month and year from created_at
-                            const createdAt = new Date(item.month);
-                            const month = createdAt.toLocaleString('default', { month: 'short' });
-                            const year = createdAt.getFullYear();
+                        const createdAt = new Date(item.month);
+                        const month = createdAt.toLocaleString('default', { month: 'short' });
+                        const year = createdAt.getFullYear();
 
-                            // Determine score color
-                            let scoreColor;
-                            if (item.max_score < 200) {
-                                scoreColor = 'red';
-                            } else if (item.max_score <= 250) {
-                                scoreColor = 'black';
-                            } else {
-                                scoreColor = 'green';
-                            }
+                        let scoreColor;
+                        if (item.max_score < 200) scoreColor = 'red';
+                        else if (item.max_score <= 250) scoreColor = 'black';
+                        else scoreColor = 'green';
 
-                            row.innerHTML = `
-                                <td>${item.name}</td>
-                                <td style="color: ${scoreColor};">${item.max_score}</td>
-                                <td>${month}</td>
-                                <td>${year}</td>
-                            `;
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td style="color: ${scoreColor};">${item.max_score}</td>
+                            <td>${month}</td>
+                            <td>${year}</td>
+                        `;
 
-                            // Append the row to the table body
-                            tableBody.appendChild(row);
-                        });
-                      
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                    }
-                });
+                        tableBody.appendChild(row);
+                    });
 
+                    // Update pagination state
+                    currentPage = response.current_page;
+
+                    $("#prevBtn").prop("disabled", !response.prev_page_url);
+                    $("#nextBtn").prop("disabled", !response.next_page_url);
+                },
+                error: function(xhr) {
+                    console.error(xhr);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadScores(1);
+
+            $("#prevBtn").on("click", function() {
+                if (currentPage > 1) {
+                    loadScores(currentPage - 1);
+                }
             });
 
-        </script>
+            $("#nextBtn").on("click", function() {
+                loadScores(currentPage + 1);
+            });
+        });
+</script>
+
+<div class="text-center mt-3">
+    <button id="prevBtn" class="btn btn-secondary">Previous</button>
+    <button id="nextBtn" class="btn btn-primary">Next</button>
+</div>
+
     </section>
-    <!-- pricing -->
+    <!-- leaderboard -->
 @endsection
