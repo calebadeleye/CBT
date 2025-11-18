@@ -13,11 +13,11 @@ class ExamController extends Controller
     /**
      * Display scores on leaderboard.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $data = Leaderboard::getScores(10);
-            return response()->json($data, 200);
+            $search = $request->query('search');
+            return response()->json(Leaderboard::getScores(10, $search));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()],500);
         }

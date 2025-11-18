@@ -58,24 +58,27 @@ class Leaderboard extends Model
      *
      * @return collection
      */
-    public static function getScores($perPage)
+    public static function getScores($perPage = 10, $search = null)
     {
-       $scores = DB::table('leaderboards')
-                ->join('users', 'users.id', '=', 'leaderboards.user_id')
-                ->select(
-                    'users.name',
-                    'leaderboards.user_id',
-                    DB::raw('MAX(leaderboards.score) AS max_score'),
-                    DB::raw("DATE_FORMAT(leaderboards.created_at, '%Y-%m') AS month")
-                )
-                ->groupBy('leaderboards.user_id', 'users.name', 'month') // ← Fix here
-                ->orderBy('month', 'desc')
-                ->orderBy('max_score', 'desc')
-                ->paginate($perPage);
+        $query = DB::table('leaderboards')
+            ->join('users', 'users.id', '=', 'leaderboards.user_id')
+            ->select(
+                'users.name',
+                'leaderboards.user_id',
+                DB::raw('MAX(leaderboards.score) AS max_score'),
+                DB::raw("DATE_FORMAT(leaderboards.created_at, '%Y-%m') AS month")
+            )
+            ->groupBy('leaderboards.user_id', 'users.name', 'month')
+            ->orderBy('month', 'desc')
+            ->orderBy('max_score', 'desc');
 
-        return $scores;
+        if ($search) {
+            $query->where('users.name', 'LIKE', "%{$search}%");
+        }
 
+        return $query->paginate($perPage);
     }
+
 
     // Releationship
     public function user()

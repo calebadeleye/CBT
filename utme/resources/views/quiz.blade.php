@@ -3,88 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Subjects - UTME</title>
-    <link rel="stylesheet" type="text/css" href="{{ asset('main.css') }}"/>
-    <link rel="icon" href="{{ asset('favicon/android-chrome-192x192.png') }}" type="image/png">
-    <link rel="icon" href="{{ asset('favicon/android-chrome-512x512.png') }}" type="image/png">
-    <link rel="icon" href="{{ asset('favicon/apple-touch-icon.png') }}" type="image/png">
-    <link rel="icon" href="{{ asset('favicon/favicon-16x16.png') }}" type="image/png">
-    <link rel="icon" href="{{ asset('favicon/favicon-32x32.png') }}" type="image/png">
-    <link rel="icon" href="{{ asset('favicon/favicon.ico') }}" type="image/png">
-    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-  <style>
-        #timer {
-            font-size: 2em;
-            margin: 20px;
-        }
+    <title>UTME Practice</title>
 
-        fieldset {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        legend {
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            flex-direction: column; /* Align content in a column layout */
-        }
+    <link rel="stylesheet" type="text/css" href="{{ asset('main.css') }}">
 
-        .image-container {
-            margin-top: 10px; /* Add some spacing between the question text and the image */
-            max-width: 100%; /* Ensure it doesn't overflow the form */
-            overflow: hidden; /* Prevent overflow */
-            text-align: center; /* Center align the image */
-        }
-
-        .image-container img {
-            max-width: 100%; /* Ensure the image scales down responsively */
-            height: auto; /* Maintain aspect ratio */
-            border-radius: 5px; /* Optional: Add rounded corners */
-        }
-
-    </style>
 </head>
+
 <body>
-    <header class="header">
-            <ul>
-                <li >Question Number: <span id="question-number">0</span>/180</li>
-                <li id="current-score">Score: <span id="score">0/400 </span></li>
-            </ul>
-           <div id="timer">02:00:00</div>
-    </header>
-    <main>
-        <section class="js-quiz">
-             
-            <section class ="start-quiz">
-                <h2>Select your subjects combination</h2>
-            </section>
 
-            <section class ="subjectsList"></section>
-             <section class ="js-answer"></section>
-            <section class="js-results"></section>
-        </section>
-    </main>
-    <script>
-          //show user pin count
-            document.addEventListener('DOMContentLoaded', (event) => {
+<!-- 🟦 TOP BAR -->
+<header class="cbt-header">
+    <div class="left">
+        <div class="meta">Question <span id="question-number">0</span></div>
+        <div class="meta">Score: <span id="score">0</span></div>
+        <div class="meta">Skipped: <span id="skipped-count">0</span> | Review: <span id="review-count">0</span></div>
+    </div>
+    <div class="timer" id="timer">02:00:00</div>
+</header>
 
-                // Retrieve subjects from session storage
-                const token = sessionStorage.getItem('login_token');
-                
-                //check if admin is authenticeated if not redirect back to login
-                if(token === null){
-                    window.location.href= '{{ route('guest.showLogin') }}'; 
-                }
+<!-- ===================== MAIN ===================== -->
+<main class="cbt-container">
 
-            });
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="{{ asset('index.js') }}"></script>
+    <!-- SUBJECT SELECTION -->
+    <section class="subject-screen">
+        <h2>Select Four Subjects</h2>
+
+        <div class="subject-list"></div>
+
+        <div class="pin-box">
+            <label>Enter PIN</label>
+            <input type="text" id="pin-input">
+        </div>
+
+        <button class="btn-primary" id="start-btn">Start Exam</button>
+    </section>
+
+    <!-- QUIZ AREA -->
+    <section class="question-screen hidden">
+
+        <h2 class="subject-title"></h2>
+
+        <div class="question-box">
+            <div id="question-text"></div>
+
+            <div class="question-image">
+                <img id="question-img" />
+            </div>
+        </div>
+
+        <div class="options-box"></div>
+
+      <div class="nav-buttons" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+
+        <!-- Submit Button (full width) -->
+        <button class="btn-primary" id="submit-answer" style="width:100%;">Submit Answer</button>
+
+        <!-- Skip + Review on one row -->
+        <div style="display:flex; gap:10px; width:100%;">
+            <button class="btn-secondary" id="skip-question" style="flex:1;">Skip</button>
+            <button class="btn-secondary" id="review-later" style="flex:1;">Review Later</button>
+        </div>
+
+    </div>
+
+
+    </section>
+
+    <!-- RESULTS -->
+    <section class="results-screen hidden">
+        <h2>Exam Complete</h2>
+        <p class="result-score"></p>
+        <button class="btn-primary" id="restart">Start New Exam</button>
+    </section>
+
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('index.js') }}"></script>
 </body>
 </html>
