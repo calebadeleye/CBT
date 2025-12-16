@@ -38,6 +38,7 @@
         rel="stylesheet">
     <link href="//fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400i,700i" rel="stylesheet">
     <!--//online fonts -->
+     {!! RecaptchaV3::initJs() !!}
 </head>
 
 <body>

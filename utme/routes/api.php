@@ -18,7 +18,12 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/admin/login', [AdminController::class, 'login']);
 Route::resource('signin',LoginController::class);
-Route::resource('signup',SignupController::class);
+
+Route::post('signup', [SignupController::class, 'store'])
+    ->middleware('throttle:5,1');
+
+Route::put('signup', [SignupController::class, 'update']);
+
 Route::resource('reset',ResetController::class);
 
 Route::get('leaderboard/show',[ExamController::class,'index']);

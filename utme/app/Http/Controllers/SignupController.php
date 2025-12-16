@@ -24,6 +24,7 @@ class SignupController extends Controller
                 'email' => 'required|string|unique:users,email',
                 'password' => 'required|string|min:6', 
                 'name' => 'required|string', 
+                'g-recaptcha-response' => 'required|recaptchav3:register,0.5',
              ]);
 
              
