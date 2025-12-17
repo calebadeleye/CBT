@@ -74,8 +74,6 @@
 
                     <a href="{{ route('guest.showTerms') }}">By submitting, you agree to our Terms & Conditions.</a>
 
-                     {!! RecaptchaV3::field('register') !!}
-
                     <div class="mt-4">
                         <button type="submit" class="btn btn-agile btn-block w-100" id="submit">register</button>
                         <div class="loading" id="loadingMessage">Loading, please wait...</div>

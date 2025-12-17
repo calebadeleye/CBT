@@ -381,14 +381,6 @@
             let password1Value = $('input[name="password1"]').val();
             let password2Value = $('input[name="password2"]').val();
 
-            // Prepare data to send to the backend
-            var requestData = {
-                name: firstNameValue+' '+lastNameValue,
-                email: emailValue,
-                password: password1Value,
-            };
-
-            console.log(requestData);
             if (password1Value !== password2Value) {
                  alert('Passwords do not match.');
             } else {
@@ -396,6 +388,17 @@
                 $('#submit').prop('disabled', true);
                 $('#loadingMessage').show();
                     // Send data to the backend
+                 grecaptcha.ready(function () {
+                 grecaptcha.execute('{{ env('RECAPTCHAV3_SITEKEY') }}', { action: 'register' })
+                    .then(function (token) {
+                         // Prepare data to send to the backend
+                let requestData = {
+                    name: firstNameValue+' '+lastNameValue,
+                    email: emailValue,
+                    password: password1Value,
+                    'g-recaptcha-response': token
+                };
+
                 $.ajax({
                     url: '/api/signup', 
                     method: 'POST',
@@ -427,6 +430,9 @@
                          // Clear the form
                         $('.register-form')[0].reset();
                     }
+                });
+
+            });
                 });
             }
         });
