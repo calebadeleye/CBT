@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Verify;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
@@ -58,11 +59,17 @@ class SignupController extends Controller
                 'data' => 'Registration successful! Please check your email to verify your account.'
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            \Log::error('Registration error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
-                'error' => 'Registration failed. Please try again later.'
+                'error' => 'Internal server error'
             ], 500);
         }
+
     }
 
 
