@@ -369,14 +369,13 @@
         }
     </style>
 
+
     <script>
+        let turnstileToken = null;
         function onTurnstileSuccess(token) {
             $('#cf-turnstile-response').val(token);
         }
-    </script>
 
-
-    <script>
         $('.register-form').on('submit', function (event) {
         event.preventDefault();
 
