@@ -74,6 +74,12 @@
 
                     <a href="{{ route('guest.showTerms') }}">By submitting, you agree to our Terms & Conditions.</a>
 
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="{{ env('CLOUDFLARE_TURNSTILE_SITE_KEY') }}"
+                        data-callback="onTurnstileSuccess">
+                    </div>
+
                     <div class="mt-4">
                         <button type="submit" class="btn btn-agile btn-block w-100" id="submit">register</button>
                         <div class="loading" id="loadingMessage">Loading, please wait...</div>

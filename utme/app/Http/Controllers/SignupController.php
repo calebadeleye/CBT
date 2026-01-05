@@ -20,25 +20,48 @@ class SignupController extends Controller
     public function store(Request $request)
     {
         try {
-             $validator = Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'email' => 'required|string|unique:users,email',
-                'password' => 'required|string|min:6', 
-                'name' => 'required|string', 
-                'g-recaptcha-response' => 'required|recaptchav3:register,0.5',
-             ]);
+                'password' => 'required|string|min:6',
+                'name' => 'required|string',
+                'cf-turnstile-response' => 'required',
+            ]);
 
-             
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
-            //register user
-            $user = User::createUser(password: $request->password, email: $request->email, name: $request->name);
+            // VERIFY TURNSTILE DIRECTLY
+            $turnstile = Http::asForm()->post(
+                'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+                [
+                    'secret'   => env('CLOUDFLARE_TURNSTILE_SECRET_KEY'),
+                    'response' => $request->input('cf-turnstile-response'),
+                    'remoteip' => $request->ip(),
+                ]
+            );
 
-            return response()->json(['data' => 'Registration successful! Please click the verification link in your email to confirm your email address'], 201);
+            if (!($turnstile->json('success') === true)) {
+                return response()->json([
+                    'error' => 'Bot verification failed. Please refresh and try again.'
+                ], 422);
+            }
 
-        } catch (Exception $e) {
-             return response()->json(['error' => $e->getMessage()], $e->getResponse()->getStatusCode() ?? 500);
+            //REGISTER USER
+            $user = User::createUser(
+                password: $request->password,
+                email: $request->email,
+                name: $request->name
+            );
+
+            return response()->json([
+                'data' => 'Registration successful! Please check your email to verify your account.'
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Registration failed. Please try again later.'
+            ], 500);
         }
     }
 

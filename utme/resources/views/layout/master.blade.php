@@ -38,7 +38,6 @@
         rel="stylesheet">
     <link href="//fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400i,700i" rel="stylesheet">
     <!--//online fonts -->
-     {!! RecaptchaV3::initJs() !!}
 </head>
 
 <body>
@@ -170,6 +169,7 @@
     </footer>
     <!-- //footer -->
     <!-- js-->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="{{ asset('js/jquery-2.2.3.min.js') }}"></script>
     <!-- loading-gif Js -->
     <script src="{{ asset('js/modernizr.js') }}"></script>
@@ -369,73 +369,72 @@
         }
     </style>
 
-       <script>
+    <script>
+        function onTurnstileSuccess(token) {
+            $('#cf-turnstile-response').val(token);
+        }
+    </script>
 
-        /*Register user to the platform */
-        $('.register-form').on('submit', function(event) {
-            event.preventDefault(); 
 
-            let firstNameValue = $('input[name="firstname"]').val();
-            let lastNameValue = $('input[name="lastname"]').val();
-            let emailValue = $('input[name="email"]').val();
-            let password1Value = $('input[name="password1"]').val();
-            let password2Value = $('input[name="password2"]').val();
+    <script>
+        $('.register-form').on('submit', function (event) {
+        event.preventDefault();
 
-            if (password1Value !== password2Value) {
-                 alert('Passwords do not match.');
-            } else {
-                   // Disable the submit button and show the loading message
-                $('#submit').prop('disabled', true);
-                $('#loadingMessage').show();
-                    // Send data to the backend
-                 grecaptcha.ready(function () {
-                 grecaptcha.execute('{{ env('RECAPTCHAV3_SITEKEY') }}', { action: 'register' })
-                    .then(function (token) {
-                         // Prepare data to send to the backend
-                let requestData = {
-                    name: firstNameValue+' '+lastNameValue,
-                    email: emailValue,
-                    password: password1Value,
-                    'g-recaptcha-response': token
-                };
+        let firstNameValue = $('#firstname').val();
+        let lastNameValue = $('#lastname').val();
+        let emailValue = $('#email').val();
+        let password1Value = $('#password1').val();
+        let password2Value = $('#password2').val();
+        let turnstileToken = $('#cf-turnstile-response').val();
 
-                $.ajax({
-                    url: '/api/signup', 
-                    method: 'POST',
-                    data: requestData, // Send the data to the backend
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
+        if (password1Value !== password2Value) {
+            alert('Passwords do not match.');
+            return;
+        }
 
-                         alert(response.data);
-                    },
-                    error: function(xhr, status, error) {
-                        var errorMessage = 'An error occurred.';
-                        if (xhr.responseJSON && xhr.responseJSON.errors) {
-                            if (xhr.responseJSON.errors.email) {
-                                // Email not found error
-                                errorMessage = xhr.responseJSON.errors.email[0];
-                            } else {
-                                // General error message
-                                errorMessage = 'An error occurred: Please check information ';
-                            }
-                        }
-                        alert(errorMessage);
-                    },
-                    complete: function(){
-                         // Re-enable the submit button and hide the loading message
-                        $('#submit').prop('disabled', false);
-                        $('#loadingMessage').hide();
-                         // Clear the form
-                        $('.register-form')[0].reset();
-                    }
-                });
+        if (!turnstileToken) {
+            alert('Please complete the security verification.');
+            return;
+        }
 
-            });
-                });
+        // Disable submit + show loading
+        $('#submit').prop('disabled', true);
+        $('#loadingMessage').show();
+
+        let requestData = {
+            name: firstNameValue + ' ' + lastNameValue,
+            email: emailValue,
+            password: password1Value,
+            'cf-turnstile-response': turnstileToken
+        };
+
+        $.ajax({
+            url: '/api/signup',
+            method: 'POST',
+            data: requestData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                alert(response.data);
+            },
+            error: function (xhr) {
+                let errorMessage = 'An error occurred.';
+                if (xhr.responseJSON?.errors?.email) {
+                    errorMessage = xhr.responseJSON.errors.email[0];
+                }
+                alert(errorMessage);
+            },
+            complete: function () {
+                $('#submit').prop('disabled', false);
+                $('#loadingMessage').hide();
+                $('.register-form')[0].reset();
+
+                // Reset Turnstile after submit
+                turnstile.reset();
             }
         });
+    });
 
     </script>
 
