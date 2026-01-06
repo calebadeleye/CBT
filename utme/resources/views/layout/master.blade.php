@@ -204,6 +204,8 @@
         });
     </script>
     <script src="https://checkout.flutterwave.com/v3.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
     <!-- //end-smooth-scrolling -->
     <!-- smooth-scrolling-of-move-up -->
     <script>
@@ -552,7 +554,10 @@
 
     </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
+
+<!-- this is flutterwave section, uncomment before use and comment out the paystack payment -->
+
+     <!--    <script>
         /*Initiate Payment */
         $('.make-payment').on('click', function(event) {
             event.preventDefault();
@@ -600,9 +605,62 @@
                 }
             });
         });
+    </script> -->
 
+<!-- Paystack section -->
+    <script>
+        $('.make-payment').on('click', function (event) {
+            event.preventDefault();
 
+            const user = JSON.parse(sessionStorage.getItem('user'));
+            const reference = 'UTME_' + Math.floor(100000 + Math.random() * 900000);
+
+            let handler = PaystackPop.setup({
+                key: "{{ config('services.paystack.public_key') }}", // Paystack public key
+                email: user.email,
+                amount: 1000 * 100, // Paystack uses kobo
+                currency: "NGN",
+                ref: reference,
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: "Platform",
+                            variable_name: "platform",
+                            value: "UTME"
+                        }
+                    ]
+                },
+                callback: function (response) {
+                    //DO NOT TRUST FRONTEND
+                    // Just show success UI, backend will verify via webhook
+
+                    Swal.fire({
+                        title: '🎉 Payment Processing!',
+                        html: `
+                            <p>Your payment was received.</p>
+                            <p><b>Your UTME PIN will be activated shortly.</b></p>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: 'Okay, Got it!',
+                        confirmButtonColor: '#74bc2d',
+                        allowOutsideClick: false,
+                    });
+
+                    // OPTIONAL: notify backend immediately
+                    $.post('/api/payments/verify', {
+                        reference: response.reference,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    });
+                },
+                onClose: function () {
+                    console.log('Payment window closed');
+                }
+            });
+
+            handler.openIframe();
+        });
     </script>
+
 
        
     <script>

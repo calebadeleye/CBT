@@ -23,6 +23,11 @@ return [
         'transfer_url' => 'https://api.flutterwave.com/v3/transfers',
     ],
 
+    'paystack' => [
+        'secret_key' => 'sk_live_e3cf959b1f97eed7f992269fa7b965df0213eac5',
+        'public_key' => 'pk_live_354a3885113fd9fe5ab863157324c9db7eed5975',
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
