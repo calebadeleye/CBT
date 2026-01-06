@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Pin;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
+use App\Mail\PinGeneration;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class PaystackController extends Controller
 {
