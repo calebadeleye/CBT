@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Pin;
@@ -38,7 +40,7 @@ class PaystackController extends Controller
 
             // Prevent double credit
             if (Wallet::where('reference', $reference)->exists()) {
-                return response()->json(['message' => 'Already processed'], 200);
+                return response()->json(['message' => 'Duplicate payment'], 200);
             }
 
             // Generate PIN
