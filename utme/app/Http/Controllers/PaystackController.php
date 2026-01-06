@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Pin;
 use App\Models\Wallet;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class PaystackController extends Controller
