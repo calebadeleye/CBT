@@ -15,8 +15,8 @@ return [
     */
 
     'flutterwave' => [
-        'secret_key' => 'FLWSECK-f653eed079fda3420ea7c16029da99b0-19908d77f3fvt-X',
-        'public_key' => 'FLWPUBK-837d99e3a54b4f684e6a6d777d49a130-X',
+        'secret_key' => env('FLW_SECRET_KEY'),
+        'public_key' => env('FLW_PUBLIC_KEY'),
         'bank_lists_url' => 'https://api.flutterwave.com/v3/banks/NG',
         'bank_resolve_account_number' => 'https://api.flutterwave.com/v3/accounts/resolve',
         'verify_payment' => 'https://api.flutterwave.com/v3/transactions/',
@@ -24,8 +24,8 @@ return [
     ],
 
     'paystack' => [
-        'secret_key' => 'sk_live_e3cf959b1f97eed7f992269fa7b965df0213eac5',
-        'public_key' => 'pk_live_354a3885113fd9fe5ab863157324c9db7eed5975',
+        'secret_key' => env('PAYSTACK_SECRET_KEY'),
+        'public_key' => env('PAYSTACK_PUBLIC_KEY'),
     ],
 
     'postmark' => [
