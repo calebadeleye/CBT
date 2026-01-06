@@ -35,3 +35,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // webhook processed from NAITALK
 Route::post('/webhook/flutterwave', [UtmeWebhookController::class, 'handleWebhook']);
 Route::post('/webhook/paystack', [UtmePaystackWebhookController::class, 'handleWebhook']);
+
+Route::post('/payments/verify', [PaystackController::class, 'verify']);
+

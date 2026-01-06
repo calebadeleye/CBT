@@ -608,58 +608,84 @@
     </script> -->
 
 <!-- Paystack section -->
-    <script>
-        $('.make-payment').on('click', function (event) {
-            event.preventDefault();
+   <script>
+    $('.make-payment').on('click', function (event) {
+        event.preventDefault();
 
-            const user = JSON.parse(sessionStorage.getItem('user'));
-            const reference = 'UTME_' + Math.floor(100000 + Math.random() * 900000);
+        const user = JSON.parse(sessionStorage.getItem('user'));
 
-            let handler = PaystackPop.setup({
-                key: "{{ config('services.paystack.public_key') }}", // Paystack public key
-                email: user.email,
-                amount: 1000 * 100, // Paystack uses kobo
-                currency: "NGN",
-                ref: reference,
-                metadata: {
-                    custom_fields: [
-                        {
-                            display_name: "Platform",
-                            variable_name: "platform",
-                            value: "UTME"
-                        }
-                    ]
-                },
-                callback: function (response) {
-                    //DO NOT TRUST FRONTEND
-                    // Just show success UI, backend will verify via webhook
+        if (!user || !user.email) {
+            alert('Please log in again.');
+            return;
+        }
 
-                    Swal.fire({
-                        title: '🎉 Payment Processing!',
-                        html: `
-                            <p>Your payment was received.</p>
-                            <p><b>Your UTME PIN will be activated shortly.</b></p>
-                        `,
-                        icon: 'success',
-                        confirmButtonText: 'Okay, Got it!',
-                        confirmButtonColor: '#74bc2d',
-                        allowOutsideClick: false,
-                    });
+        const reference = 'UTME_' + Date.now();
 
-                    // OPTIONAL: notify backend immediately
-                    $.post('/api/payments/verify', {
+        let handler = PaystackPop.setup({
+            key: "{{ config('services.paystack.public_key') }}",
+            email: user.email,
+            amount: 1000 * 100, // ₦1000 → kobo
+            currency: "NGN",
+            ref: reference,
+
+            metadata: {
+                custom_fields: [
+                    {
+                        display_name: "Platform",
+                        variable_name: "platform",
+                        value: "UTME"
+                    }
+                ]
+            },
+
+            callback: function (response) {
+
+                // Payment already happened here
+                Swal.fire({
+                    title: '⏳ Verifying Payment...',
+                    text: 'Please wait while we confirm your payment.',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                // Send reference to backend
+                $.ajax({
+                    url: '/api/payments/verify',
+                    method: 'POST',
+                    data: {
                         reference: response.reference,
                         _token: $('meta[name="csrf-token"]').attr('content')
-                    });
-                },
-                onClose: function () {
-                    console.log('Payment window closed');
-                }
-            });
+                    },
+                    success: function (res) {
+                        Swal.fire({
+                            title: '🎉 Payment Successful!',
+                            html: `
+                                <p>Your UTME PIN has been generated.</p>
+                                <p><b>Please check your email or sign out and signin again.</b></p>
+                            `,
+                            icon: 'success',
+                            confirmButtonColor: '#74bc2d',
+                            allowOutsideClick: false
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Verification Issue',
+                            xhr.responseJSON?.message || 'verification failed.',
+                            'warning'
+                        );
+                    }
+                });
+            },
 
-            handler.openIframe();
+            onClose: function () {
+                console.log('Payment popup closed');
+            }
         });
-    </script>
+
+        handler.openIframe();
+    });
+</script>
 
 
        

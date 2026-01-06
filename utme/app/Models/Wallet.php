@@ -18,6 +18,7 @@ class Wallet extends Model
         'amount',
         'user_id',
         'type',
+        'reference',
     ];
 
     const TYPE_CREDIT = 'Credit';
@@ -34,12 +35,13 @@ class Wallet extends Model
      *
      * @return array<string, string>
      */
-    public static function saveToWallet(string $amount, int $user_id, string $type)
+    public static function saveToWallet(string $amount, int $user_id, string $type,string $reference)
     {
             self::create([
                 'amount' => $amount,
                 'user_id' => $user_id,
                 'type' => $type,
+                'reference' => $reference
              ]);
     }
 }
