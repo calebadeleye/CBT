@@ -9,6 +9,7 @@ use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\PaystackController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\UtmeWebhookController;
 use App\Http\Controllers\UtmePaystackWebhookController;
