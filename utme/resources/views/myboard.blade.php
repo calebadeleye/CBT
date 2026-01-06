@@ -27,6 +27,7 @@
                     <h3 class="main-title-agile" id="username"></h3>
                     <span class="bg-theme"></span>
                 </div>
+                
                 <div class="row position-relative text-center">
 
                     <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
@@ -74,7 +75,19 @@
                     </a>
                     </div>
 
-                <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
+                 <!--    <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
+                         <a href="{{ route('guest.aiRecommendations') }}" title="click to view all scores">
+                            <div class="counter py-4 px-3 bg-ai-theme">
+                            <i class="fa fa-robot"></i>
+                                <p class="count-text text-capitalize">AI Insights</p>
+                                <br>
+                                <a href="#" class="btn btn-success btn-sm make-payment">View Insight</a>
+                            </div>
+                        </a>
+                    </div> -->
+
+
+               <!--  <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
                      <a href="{{ route('guest.addBank') }}" title="click to add bank details">
                         <div class="counter py-4 px-3 bg1-theme">
                             <i class="fa fa-piggy-bank"></i>
@@ -83,7 +96,7 @@
                                 <a href="{{ route('guest.addBank')  }}" class="btn btn-success btn-sm">Click Here</a>
                         </div>
                     </a>
-                    </div>
+                </div> -->
 
                 </div>
             </div>

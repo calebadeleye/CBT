@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SignupController;
+use App\Http\Controllers\UserPerformanceController;
 
 
 Route::controller(GuestController::class)->group(function () {
@@ -24,6 +25,9 @@ Route::controller(GuestController::class)->group(function () {
     Route::get('/addquestion', 'addQuestion')->name('guest.addQuestion');
     Route::get('/addbank', 'addBank')->name('guest.addBank');
 });
+
+// AI
+Route::get('/user/ai-insights', [UserPerformanceController::class, 'aiInsights'])->name('guest.aiRecommendations');
 
 Route::get('/verify/{id}', [SignupController::class, 'update']);
 Route::get('/reset/{token}', [ResetController::class, 'show']);

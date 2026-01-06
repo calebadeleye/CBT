@@ -46,10 +46,10 @@ class LoginController extends Controller
             $leaderboard = Leaderboard::myScore(user_id: $user->id);
 
             //Bank details.
-            $bank = Bank::checkBank(user_id: $user->id);
+            //$bank = Bank::checkBank(user_id: $user->id);
 
             //List banks.
-            $banklist = Bank::listBank()['data'];
+            //$banklist = Bank::listBank()['data'];
 
             //Fetch User Pin.
             $pin = Pin::myPin($user->id);
@@ -63,7 +63,7 @@ class LoginController extends Controller
             }
             $token = $user->createToken('UserToken')->plainTextToken;
 
-            return response()->json(['token' => $token,'user' => $user,'leaderboard' => $leaderboard,'pin' => $pin,'bank' => $bank,'banklist' => $banklist,'questions' => $questions], 200);
+            return response()->json(['token' => $token,'user' => $user,'leaderboard' => $leaderboard,'pin' => $pin,'questions' => $questions], 200);
          } 
 
         // Authentication failed
