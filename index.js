@@ -32,6 +32,7 @@ var randomQuestions = [];
 var currentIndex = 0;      // index for main pass
 var score = 0;
 var timerInterval = null;
+var questionStartTime = null;
 var totalSeconds = 2 * 60 * 60; // default 2 hours
 
 // SKIP & REVIEW (store ORIGINAL indexes of randomQuestions)
@@ -86,7 +87,10 @@ renderSubjectList();
 /* =========================
    2) Start exam -> validate & fetch questions
    ========================= */
-$("#start-btn").on("click", function () {
+    $("#start-btn").on("click", function () {
+    // -----------------------------
+    // 1. Collect selected subjects
+    // -----------------------------
     let selectedSubjects = [];
     $('input[name="subject"]:checked').each(function () {
         selectedSubjects.push($(this).val());
@@ -98,11 +102,15 @@ $("#start-btn").on("click", function () {
         return;
     }
 
+    // Require exactly 4 subjects
     if (selectedSubjects.length !== 4) {
         showAlert("Only 4 subjects Required", "Please select exactly 4 subjects.");
         return;
     }
 
+    // -----------------------------
+    // 2. PIN validation
+    // -----------------------------
     let pinValue = $("#pin-input").val().trim();
     if (!pinValue) {
         showAlert("PIN required", "Enter a valid PIN.");
@@ -114,7 +122,7 @@ $("#start-btn").on("click", function () {
         return;
     }
 
-    if (pin.count == 10) {
+    if (pin.count >= 10) {
         showAlert("PIN limit reached", "You have exceeded your PIN limit. Please purchase another PIN.");
         return;
     }
@@ -123,59 +131,100 @@ $("#start-btn").on("click", function () {
     pin.count++;
     sessionStorage.setItem('mypin', JSON.stringify(pin));
 
-    // UI
+    // -----------------------------
+    // 3. Update UI
+    // -----------------------------
     $(".subject-screen").addClass("hidden");
     $(".question-screen").removeClass("hidden");
+    $("#question-text").html("Loading questions...");
 
-    // fetch questions from API
+    // -----------------------------
+    // 4. Start exam session
+    // -----------------------------
     $.ajax({
-        url: addSubjectUrl,
-        method: "POST",
-        data: {
-            subject: selectedSubjects,
-            pin: pinValue,
-            user_id: user?.id
-        },
+        url: '/api/exam/start',
+        type: 'POST',
         headers: {
-            "Authorization": "Bearer " + token,
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            'Authorization': 'Bearer ' + token,
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        beforeSend: function () {
-            $("#question-text").html("Loading questions...");
+        data: {
+            user_id: user?.id,
         },
-        success: function (response) {
-            randomQuestions = response.data || [];
-            if (!randomQuestions.length) {
-                showAlert("No questions", "No questions returned for the selected subjects.");
-                $(".subject-screen").removeClass("hidden");
-                $(".question-screen").addClass("hidden");
-                return;
-            }
-            // reset state
-            currentIndex = 0;
-            score = 0;
-            skippedQuestions = [];
-            reviewLaterQuestions = [];
-            reviewMode = false;
-            reviewIndex = 0;
-            $("#score").text(`${score}/400`);
-            updateCounters();
-            loadQuestion();
-            startTimer();
+        success(res) {
+            // Store exam session ID
+            sessionStorage.setItem('exam_session_id', res.exam_session_id);
+
+            // -----------------------------
+            // 5. Fetch questions from backend
+            // -----------------------------
+            $.ajax({
+                url: addSubjectUrl, // your existing API to get question data
+                method: "POST",
+                data: {
+                    subject: selectedSubjects,
+                    pin: pinValue,
+                    user_id: user?.id
+                },
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    randomQuestions = response.data || [];
+                    if (!randomQuestions.length) {
+                        showAlert("No questions", "No questions returned for the selected subjects.");
+                        $(".subject-screen").removeClass("hidden");
+                        $(".question-screen").addClass("hidden");
+                        return;
+                    }
+
+                    // -----------------------------
+                    // 6. Reset state
+                    // -----------------------------
+                    currentIndex = 0;
+                    score = 0;
+                    skippedQuestions = [];
+                    reviewLaterQuestions = [];
+                    reviewMode = false;
+                    reviewIndex = 0;
+                    $("#score").text(`${score}/400`);
+                    updateCounters();
+
+                    // -----------------------------
+                    // 7. Load first question
+                    // -----------------------------
+                    loadQuestion();
+
+                    // -----------------------------
+                    // 8. Start timer
+                    // -----------------------------
+                    startTimer();
+                },
+                error: function (xhr) {
+                    let msg = xhr.responseJSON?.message || xhr.responseText || "Failed to load questions.";
+                    showAlert("Error", msg, "error");
+                    $(".subject-screen").removeClass("hidden");
+                    $(".question-screen").addClass("hidden");
+                }
+            });
         },
-        error: function (xhr) {
-            let msg = xhr.responseJSON?.message || xhr.responseText || "Failed to load questions.";
+        error(xhr) {
+            let msg = xhr.responseJSON?.message || xhr.responseText || "Unable to start exam session";
             showAlert("Error", msg, "error");
-            $(".subject-screen").removeClass("hidden");
-            $(".question-screen").addClass("hidden");
         }
     });
 });
+
 
 /* =========================
    3) Load main question (normal pass)
    ========================= */
 function loadQuestion() {
+
+    // RESET PER-QUESTION TIMER
+    questionStartTime = Date.now();
+
     // if main pass finished
     if (!randomQuestions || currentIndex >= randomQuestions.length) {
         // Only prompt for review if there are reviewLaterQuestions
@@ -274,88 +323,135 @@ $(document).on("click", "#review-later", function(){
 /* =========================
    5) Single unified Submit handler (normal pass & review mode)
    ========================= */
-$(document).on("click", "#submit-answer", function () {
-    // Determine if we are in review mode or main mode
+    $(document).on("click", "#submit-answer", function () {
+
+    // -----------------------------
+    // 1. VALIDATE FLOW STATE
+    // -----------------------------
     if (reviewMode) {
-        // In review mode we operate on reviewLaterQuestions[reviewIndex]
         if (reviewIndex >= reviewLaterQuestions.length) {
-            // nothing left
             showResults();
             return;
         }
     } else {
-        // ensure there are main questions left
         if (!randomQuestions || currentIndex >= randomQuestions.length) {
-            // nothing to submit
             handleEndOfFirstPass();
             return;
         }
     }
 
-    // check selection
+    // -----------------------------
+    // 2. ENSURE OPTION SELECTED
+    // -----------------------------
     const $selected = $('input[name="option"]:checked');
     if (!$selected.length) {
         showAlert("Select an answer", "Please choose an option.");
         return;
     }
 
-    // compute originalIndex (index inside randomQuestions)
-    const originalIndex = reviewMode ? reviewLaterQuestions[reviewIndex] : currentIndex;
+    // -----------------------------
+    // 3. RESOLVE QUESTION
+    // -----------------------------
+    const originalIndex = reviewMode
+        ? reviewLaterQuestions[reviewIndex]
+        : currentIndex;
+
     const q = randomQuestions[originalIndex];
 
-    // selected text + correctness detection
-    const selectedText = $selected.attr("data-text") || $selected.parent().text().trim();
+    // -----------------------------
+    // 4. DETERMINE SELECTED ANSWER
+    // -----------------------------
+    const selectedText =
+        $selected.attr("data-text") ||
+        $selected.parent().text().trim();
+
     const correct = q.answer;
     let isCorrect = false;
 
-    // handle object-style answers (A,B,...) vs full-text answers
-    if (typeof correct === 'string' && correct.length === 1 && !Array.isArray(q.options)) {
-        // compare by key (selected input value)
+    // Support letter-based answers (A, B, C...) or text-based
+    if (
+        typeof correct === 'string' &&
+        correct.length === 1 &&
+        !Array.isArray(q.options)
+    ) {
         isCorrect = String($selected.val()) === String(correct);
     } else {
         isCorrect = String(selectedText).trim() === String(correct).trim();
     }
 
-    // marking: use q.mark or fallback to 2
+    // -----------------------------
+    // 5. SAVE ATTEMPT (CRITICAL PART)
+    // -----------------------------
+    const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+
+    $.ajax({
+        url: '/api/exam/attempt',
+        type: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + token,             // your API token
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF
+        },
+        data: {
+            exam_session_id: sessionStorage.getItem('exam_session_id'),
+            question_id: q.id,
+            selected_option: selectedText,
+            is_correct: isCorrect ? 1 : 0,
+            time_spent: timeSpent
+        },
+        success: function(res) {
+            //console.log('Attempt saved', res);
+        },
+        error: function(xhr) {
+            console.error('Error saving attempt:', xhr.responseText || xhr.statusText);
+            showAlert("Error", "Failed to save answer. Please try again.", "error");
+        }
+    });
+
+
+    // -----------------------------
+    // 6. SCORE CALCULATION
+    // -----------------------------
     let mark = 2;
-    if (q.mark !== undefined && !isNaN(parseFloat(q.mark))) mark = parseFloat(q.mark);
+    if (q.mark !== undefined && !isNaN(parseFloat(q.mark))) {
+        mark = parseFloat(q.mark);
+    }
+
     if (isCorrect) score += mark;
 
-    // update UI score
     $("#score").text(`${score}/400`);
 
-    // remove this question from reviewLaterQuestions if present (by index)
-    const remFromArray = (arr, val) => {
+    // -----------------------------
+    // 7. CLEAN REVIEW QUEUE
+    // -----------------------------
+    const removeFromArray = (arr, val) => {
         const pos = arr.indexOf(val);
         if (pos !== -1) arr.splice(pos, 1);
     };
-    remFromArray(reviewLaterQuestions, originalIndex);
-    // NOTE: skippedQuestions remain as record but are not revisited
 
-    // clear selection
+    removeFromArray(reviewLaterQuestions, originalIndex);
+
+    // -----------------------------
+    // 8. RESET UI STATE
+    // -----------------------------
     $('input[name="option"]').prop('checked', false);
 
-    // advance pointers properly
+    // -----------------------------
+    // 9. NAVIGATION LOGIC
+    // -----------------------------
     if (reviewMode) {
-        // After answering a review item we removed it from reviewLaterQuestions.
-        // Since we removed current item, reviewIndex remains pointing to next item (same index).
-        // If no more items, finish.
         if (reviewIndex >= reviewLaterQuestions.length) {
-            // all review items answered
             showResults();
             return;
-        } else {
-            updateCounters();
-            loadReviewQuestion(); // load next review item at same reviewIndex
-            return;
         }
-    } else {
-        // normal flow: advance main pointer
-        currentIndex++;
+
         updateCounters();
-        loadQuestion();
+        loadReviewQuestion();
         return;
     }
+
+    currentIndex++;
+    updateCounters();
+    loadQuestion();
 });
 
 /* =========================
@@ -404,6 +500,9 @@ function startReviewMode() {
 }
 
 function loadReviewQuestion() {
+
+    // RESET PER-QUESTION TIMER
+    questionStartTime = Date.now();
     if (!reviewLaterQuestions || reviewLaterQuestions.length === 0 || reviewIndex >= reviewLaterQuestions.length) {
         showResults();
         return;
@@ -495,7 +594,9 @@ function showResults() {
         score: score,
         user_id: user?.id,
         count: pin?.count ?? 0,
-        pin: pin?.pin
+        pin: pin?.pin,
+        exam_session_id: sessionStorage.getItem('exam_session_id'),
+        time_used: (2 * 60 * 60) - totalSeconds,
     };
 
     $.ajax({

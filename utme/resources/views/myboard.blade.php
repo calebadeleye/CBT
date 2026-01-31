@@ -66,25 +66,12 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
-                     <a href="{{ route('guest.showUserScores') }}" title="click to view all scores">
                         <div class="counter py-4 px-3 bg3-theme">
                             <i class="fas fa-trophy"></i>
-                            <p class="count-text text-capitalize">Latest score</p>
-                            <div class="timer count-title count-number mt-2 myscore" data-to="0" data-speed="100"></div>
+                            <p class="count-text text-capitalize">My Exam History</p>
+                                <a href="{{ route('guest.showUserScores') }}" class="btn btn-success btn-sm">Click Here</a>
                         </div>
-                    </a>
                     </div>
-
-                 <!--    <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
-                         <a href="{{ route('guest.aiRecommendations') }}" title="click to view all scores">
-                            <div class="counter py-4 px-3 bg-ai-theme">
-                            <i class="fa fa-robot"></i>
-                                <p class="count-text text-capitalize">AI Insights</p>
-                                <br>
-                                <a href="#" class="btn btn-success btn-sm make-payment">View Insight</a>
-                            </div>
-                        </a>
-                    </div> -->
 
 
                <!--  <div class="col-lg-3 col-md-6 mt-lg-0 mt-sm-5 mt-3">
@@ -123,7 +110,6 @@
             document.addEventListener('DOMContentLoaded', (event) => {
                 // Retrieve the pin from session storage
                 const pin = JSON.parse(sessionStorage.getItem('mypin'));
-                console.log(pin);
 
                 if (pin && pin.status === "open") {
                     document.getElementById('active-pin').textContent = `PIN: ${pin.pin}`;

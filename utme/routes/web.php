@@ -27,7 +27,11 @@ Route::controller(GuestController::class)->group(function () {
 });
 
 // AI
-Route::get('/user/ai-insights', [UserPerformanceController::class, 'aiInsights'])->name('guest.aiRecommendations');
+
+Route::get(
+    '/user/exam/{examSession}',
+    [UserPerformanceController::class, 'show']
+)->name('guest.exam.details');
 
 Route::get('/verify/{id}', [SignupController::class, 'update']);
 Route::get('/reset/{token}', [ResetController::class, 'show']);

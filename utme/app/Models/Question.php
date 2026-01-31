@@ -89,4 +89,12 @@ class Question extends Model
         
     }
 
+        /**
+     * A question can appear in many attempts
+     */
+    public function attempts()
+    {
+        return $this->hasMany(QuestionAttempt::class);
+    }
+
 }

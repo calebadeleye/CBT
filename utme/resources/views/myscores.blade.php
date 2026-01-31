@@ -70,10 +70,15 @@
                     const year = createdAt.getFullYear();
 
                     row.innerHTML = `
-                        <td><span class="btn btn-sm btn-success">${item.score}</span></td>
-                        <td>${month}</td>
-                        <td>${year}</td>
-                    `;
+                                    <td>
+                                        <a href="/user/exam/${item.exam_session_id}" class="btn btn-sm btn-success">
+                                            ${item.obtained_score}
+                                        </a>
+                                    </td>
+                                    <td>${month}</td>
+                                    <td>${year}</td>
+                                `;
+
 
                     // Append the row to the table body
                     tableBody.appendChild(row);

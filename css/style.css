@@ -66,6 +66,11 @@ input[type="submit"] {
     cursor: pointer
 }
 
+.bg-ai-theme {
+    background: #74bc2d;
+    color: white;
+}
+
 /* banner */
 /*-- page-loading-icon --*/
 .no-js #loader {

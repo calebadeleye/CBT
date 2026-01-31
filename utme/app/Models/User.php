@@ -85,5 +85,15 @@ class User extends Authenticatable
 
     }
 
+    public function examSessions()
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
+    public function questionAtempts()
+    {
+        return $this->hasMany(QuestionAtempt::class);
+    }
+
 
 }

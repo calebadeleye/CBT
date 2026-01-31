@@ -12,6 +12,8 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\PaystackController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\UtmeWebhookController;
+use App\Http\Controllers\ExamAttemptController;
+use App\Http\Controllers\ExamSessionController;
 use App\Http\Controllers\UtmePaystackWebhookController;
 
 Route::get('/user', function (Request $request) {
@@ -31,6 +33,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('practice',PracticeController::class);
     Route::resource('leaderboard',ExamController::class);
     Route::resource('bank',PaymentController::class);
+    Route::post('/exam/attempt', [ExamAttemptController::class, 'store']);
+    Route::post('/exam/start', [ExamSessionController::class, 'start']);
+
 });
 
 // webhook processed from NAITALK

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Exam;
 use App\Models\Pin;
 use App\Models\User;
 use App\Models\Bank;
 use App\Models\Question;
-use App\Models\Leaderboard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -43,7 +43,7 @@ class LoginController extends Controller
              $questions = Question::getAll();
 
             //Fetch User Scores.
-            $leaderboard = Leaderboard::myScore(user_id: $user->id);
+            $leaderboard = Exam::getScores(user_id: $user->id);
 
             //Bank details.
             //$bank = Bank::checkBank(user_id: $user->id);
@@ -55,12 +55,12 @@ class LoginController extends Controller
             $pin = Pin::myPin($user->id);
 
             // Check if the user's email is verified
-            if (is_null($user->email_verified_at)) {
+            // if (is_null($user->email_verified_at)) {
 
-                //send verification link again
-                User::sendLink($user);
-                return response()->json(['message' => 'Email not verified. Please check the verification link sent to your email.'], 403);
-            }
+            //     //send verification link again
+            //     User::sendLink($user);
+            //     return response()->json(['message' => 'Email not verified. Please check the verification link sent to your email.'], 403);
+            // }
             $token = $user->createToken('UserToken')->plainTextToken;
 
             return response()->json(['token' => $token,'user' => $user,'leaderboard' => $leaderboard,'pin' => $pin,'questions' => $questions], 200);
