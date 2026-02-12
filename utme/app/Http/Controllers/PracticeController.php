@@ -17,7 +17,7 @@ class PracticeController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'subject' => 'required|array|min:4|max:4', // exactly 4 subjects
+                'subject' => 'required|array|min:1|max:4', // exactly 4 subjects
                 'pin'     => 'required|string|exists:pins,pin',
                 'user_id' => 'required|integer'
             ]);
@@ -41,13 +41,14 @@ class PracticeController extends Controller
                     ->limit($limit)
                     ->get();
 
-                if ($subjectQuestions->count() < $limit) {
-                    return response()->json([
-                        'errors' => [
-                            'subject' => ["Not enough questions for subject {$subjectCode}. Needed {$limit}, found {$subjectQuestions->count()}."]
-                        ]
-                    ], 422);
-                }
+                    //check if there is enough questions per subject, 40 is the required
+                // if ($subjectQuestions->count() < $limit) {
+                //     return response()->json([
+                //         'errors' => [
+                //             'subject' => ["Not enough questions for subject {$subjectCode}. Needed {$limit}, found {$subjectQuestions->count()}."]
+                //         ]
+                //     ], 422);
+                // }
 
                 // shuffle inside subject and add user_answer + score fields
                 $subjectQuestions = $subjectQuestions->shuffle()->map(function ($q) {
@@ -61,11 +62,11 @@ class PracticeController extends Controller
             }
 
             // Final validation
-            if ($questions->count() !== 180) {
-                return response()->json([
-                    'errors' => ['subject' => ["Total questions is {$questions->count()} instead of 180. Check for duplicates or missing data."]]
-                ], 422);
-            }
+            // if ($questions->count() !== 180) {
+            //     return response()->json([
+            //         'errors' => ['subject' => ["Total questions is {$questions->count()} instead of 180. Check for duplicates or missing data."]]
+            //     ], 422);
+            // }
 
             // Increment pin usage
             Pin::incrementPin($request->pin);

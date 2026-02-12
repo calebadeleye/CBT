@@ -97,14 +97,22 @@ renderSubjectList();
     });
 
     // Ensure ENG is compulsory
-    if (!selectedSubjects.includes("ENG")) {
-        showAlert("English Required", "ENG is compulsory. Please select ENG.");
-        return;
-    }
+    // if (!selectedSubjects.includes("ENG")) {
+    //     showAlert("English Required", "ENG is compulsory. Please select ENG.");
+    //     return;
+    // }
 
     // Require exactly 4 subjects
-    if (selectedSubjects.length !== 4) {
-        showAlert("Only 4 subjects Required", "Please select exactly 4 subjects.");
+    // if (selectedSubjects.length !== 4) {
+    //     showAlert("Only 4 subjects Required", "Please select exactly 4 subjects.");
+    //     return;
+    // }
+
+      if (selectedSubjects.length < 1 || selectedSubjects.length > 4) {
+        showAlert(
+            "Invalid Selection",
+            "Please select a minimum of 1 subject and a maximum of 4 subjects."
+        );
         return;
     }
 
